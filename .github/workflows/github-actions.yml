@@ -52,7 +52,7 @@ jobs:
 
     - name: Scan Docker image
       run: |
-        ./sysdig-cli-scanner --apiurl https://app.us4.sysdig.com --api-token ${{ secrets.SYSDIG_API_TOKEN }} $REGISTRY/$REPOSITORY:$IMAGE_TAG
+        ${GITHUB_WORKSPACE}/cache/sysdig-cli-scanner --apiurl https://app.us4.sysdig.com --api-token ${{ secrets.SYSDIG_API_TOKEN }} $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
     - name: Build, tag, and push vote docker image to Amazon ECR
       env:
