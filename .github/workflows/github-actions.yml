@@ -41,15 +41,6 @@ jobs:
           echo "sysdig-cli-scanner latest version already downloaded"
         fi
 
-    - name: Scan Docker image
-      env:
-        REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        REPOSITORY: example-voting-app-worker
-        IMAGE_TAG: latest
-        SECURE_API_TOKEN: ${{ secrets.SECURE_API_TOKEN }}
-      run: |
-        ${GITHUB_WORKSPACE}/cache/sysdig-cli-scanner --console-log --apiurl https://app.us4.sysdig.com $REGISTRY/$REPOSITORY:$IMAGE_TAG
-
     - name: Build, tag, and push worker docker image to Amazon ECR
       env:
         REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -58,6 +49,17 @@ jobs:
       run: |
         docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG ./worker
         docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+    - name: Scan Docker worker image
+      env:
+        REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        REPOSITORY: example-voting-app-worker
+        IMAGE_TAG: latest
+        SECURE_API_TOKEN: ${{ secrets.SECURE_API_TOKEN }}
+      run: |
+        ${GITHUB_WORKSPACE}/cache/sysdig-cli-scanner --console-log --apiurl https://app.us4.sysdig.com $REGISTRY/$REPOSITORY:$IMAGE_TAG
+        echo "exit_code=$?" >> $GITHUB_ENV
+        exit_code=0
 
     - name: Build, tag, and push vote docker image to Amazon ECR
       env:
@@ -68,7 +70,17 @@ jobs:
         docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG ./vote
         docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
-    
+    - name: Scan Docker vote image
+      env:
+        REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        REPOSITORY: example-voting-app-worker
+        IMAGE_TAG: latest
+        SECURE_API_TOKEN: ${{ secrets.SECURE_API_TOKEN }}
+      run: |
+        ${GITHUB_WORKSPACE}/cache/sysdig-cli-scanner --console-log --apiurl https://app.us4.sysdig.com $REGISTRY/$REPOSITORY:$IMAGE_TAG
+        echo "exit_code=$?" >> $GITHUB_ENV
+        exit_code=0
+
     - name: Build, tag, and push result image to Amazon ECR
       env:
         REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -77,6 +89,17 @@ jobs:
       run: |
         docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG ./result
         docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+    - name: Scan Docker result image
+      env:
+        REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        REPOSITORY: example-voting-app-worker
+        IMAGE_TAG: latest
+        SECURE_API_TOKEN: ${{ secrets.SECURE_API_TOKEN }}
+      run: |
+        ${GITHUB_WORKSPACE}/cache/sysdig-cli-scanner --console-log --apiurl https://app.us4.sysdig.com $REGISTRY/$REPOSITORY:$IMAGE_TAG
+        echo "exit_code=$?" >> $GITHUB_ENV
+        exit_code=0
 
     - name: Update kube config
       run: aws eks update-kubeconfig --name demo-cluster
