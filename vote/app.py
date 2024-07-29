@@ -9,7 +9,7 @@ import statsd
 import time
 
 option_a = os.getenv('OPTION_A', "Cheeze Pizza")
-option_b = os.getenv('OPTION_B', "Hamburger")
+option_b = os.getenv('OPTION_B', "Cheeseburger")
 hostname = socket.gethostname()
 
 app = Flask(__name__)
