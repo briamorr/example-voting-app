@@ -31,16 +31,16 @@ def hello():
 
     vote = None
 
-    client = statsd.Client("python", connection)
-    
-    # Create counter
-    counter = client.get_counter("votecounter")
-
     connection = statsd.Connection(
         host='127.0.0.1',
         port=8125,
         sample_rate=1,
     )
+
+    client = statsd.Client("python", connection)
+    
+    # Create counter
+    counter = client.get_counter("votecounter")
 
     if request.method == 'POST':
         redis = get_redis()
