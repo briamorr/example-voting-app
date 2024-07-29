@@ -5,6 +5,8 @@ import socket
 import random
 import json
 import logging
+import statsd
+import time
 
 option_a = os.getenv('OPTION_A', "Cheeze Pizza")
 option_b = os.getenv('OPTION_B', "Hamburger")
@@ -29,12 +31,24 @@ def hello():
 
     vote = None
 
+    client = statsd.Client("python", connection)
+    
+    # Create counter
+    counter = client.get_counter("votecounter")
+
+    connection = statsd.Connection(
+        host='127.0.0.1',
+        port=8125,
+        sample_rate=1,
+    )
+
     if request.method == 'POST':
         redis = get_redis()
         vote = request.form['vote']
         app.logger.info('Received vote for %s', vote)
         data = json.dumps({'voter_id': voter_id, 'vote': vote})
         redis.rpush('votes', data)
+        counter += 1
 
     resp = make_response(render_template(
         'index.html',
